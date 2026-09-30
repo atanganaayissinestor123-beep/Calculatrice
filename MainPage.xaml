@@ -1,0 +1,111 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<!-- IMPORTANT : remplace "Calculatrice" dans x:Class par le nom (namespace) de ton projet -->
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="Calculatrice.MainPage"
+             Title="Calculatrice"
+             BackgroundColor="#121212">
+
+    <ContentPage.Resources>
+        <!-- Style de base : chiffres -->
+        <Style TargetType="Button">
+            <Setter Property="FontSize" Value="26" />
+            <Setter Property="TextColor" Value="White" />
+            <Setter Property="BackgroundColor" Value="#333333" />
+            <Setter Property="CornerRadius" Value="16" />
+            <Setter Property="Padding" Value="0" />
+            <Setter Property="Margin" Value="3" />
+            <Setter Property="MinimumHeightRequest" Value="0" />
+            <Setter Property="MinimumWidthRequest" Value="0" />
+        </Style>
+        <!-- Fonctions : C, effacer, %, +/- -->
+        <Style TargetType="Button" Class="Fn">
+            <Setter Property="BackgroundColor" Value="#A5A5A5" />
+            <Setter Property="TextColor" Value="Black" />
+        </Style>
+        <!-- Opérateurs -->
+        <Style TargetType="Button" Class="Op">
+            <Setter Property="BackgroundColor" Value="#FF9500" />
+        </Style>
+    </ContentPage.Resources>
+
+    <!-- LAYOUT 1 : Grid racine (afficheur + clavier), réorganisée en paysage dans le code-behind -->
+    <Grid x:Name="RootGrid"
+          Padding="8"
+          RowSpacing="8"
+          ColumnSpacing="8"
+          RowDefinitions="2*,5*"
+          ColumnDefinitions="*">
+
+        <!-- LAYOUT 2 : Border = cadre arrondi de l'afficheur -->
+        <Border x:Name="DisplayBorder"
+                Grid.Row="0" Grid.Column="0"
+                BackgroundColor="#1E1E1E"
+                Stroke="#2A2A2A"
+                StrokeShape="RoundRectangle 20"
+                Padding="14,8">
+
+            <!-- LAYOUT 3 : VerticalStackLayout = barre d'état / opération / résultat empilés -->
+            <VerticalStackLayout VerticalOptions="End" Spacing="2">
+
+                <!-- LAYOUT 4 : HorizontalStackLayout = titre + opérateur en attente côte à côte -->
+                <HorizontalStackLayout Spacing="10">
+                    <Label Text="Calculatrice" FontSize="12" TextColor="#777777" />
+                    <Label x:Name="StatusLabel" FontSize="12" TextColor="#FF9500" />
+                </HorizontalStackLayout>
+
+                <!-- Opération en cours, au-dessus du résultat -->
+                <Label x:Name="ExpressionLabel"
+                       FontSize="18"
+                       TextColor="#9E9E9E"
+                       HorizontalTextAlignment="End"
+                       LineBreakMode="HeadTruncation"
+                       MaxLines="1" />
+
+                <!-- LAYOUT 5 : ScrollView horizontal = les très longs nombres ne débordent jamais -->
+                <ScrollView x:Name="ResultScroll"
+                            Orientation="Horizontal"
+                            HorizontalScrollBarVisibility="Never">
+                    <Label x:Name="ResultLabel"
+                           Text="0"
+                           FontSize="56"
+                           TextColor="White"
+                           HorizontalTextAlignment="End"
+                           LineBreakMode="NoWrap" />
+                </ScrollView>
+            </VerticalStackLayout>
+        </Border>
+
+        <!-- Clavier : Grid 5 lignes x 4 colonnes en tailles proportionnelles (*) -->
+        <Grid x:Name="Keypad"
+              Grid.Row="1" Grid.Column="0"
+              RowDefinitions="*,*,*,*,*"
+              ColumnDefinitions="*,*,*,*">
+
+            <Button Text="C"  StyleClass="Fn" Grid.Row="0" Grid.Column="0" Clicked="OnClear" />
+            <Button Text="⌫"  StyleClass="Fn" Grid.Row="0" Grid.Column="1" Clicked="OnBackspace" />
+            <Button Text="%"  StyleClass="Fn" Grid.Row="0" Grid.Column="2" Clicked="OnPercent" />
+            <Button Text="÷"  StyleClass="Op" Grid.Row="0" Grid.Column="3" Clicked="OnOperator" />
+
+            <Button Text="7" Grid.Row="1" Grid.Column="0" Clicked="OnDigit" />
+            <Button Text="8" Grid.Row="1" Grid.Column="1" Clicked="OnDigit" />
+            <Button Text="9" Grid.Row="1" Grid.Column="2" Clicked="OnDigit" />
+            <Button Text="×" StyleClass="Op" Grid.Row="1" Grid.Column="3" Clicked="OnOperator" />
+
+            <Button Text="4" Grid.Row="2" Grid.Column="0" Clicked="OnDigit" />
+            <Button Text="5" Grid.Row="2" Grid.Column="1" Clicked="OnDigit" />
+            <Button Text="6" Grid.Row="2" Grid.Column="2" Clicked="OnDigit" />
+            <Button Text="−" StyleClass="Op" Grid.Row="2" Grid.Column="3" Clicked="OnOperator" />
+
+            <Button Text="1" Grid.Row="3" Grid.Column="0" Clicked="OnDigit" />
+            <Button Text="2" Grid.Row="3" Grid.Column="1" Clicked="OnDigit" />
+            <Button Text="3" Grid.Row="3" Grid.Column="2" Clicked="OnDigit" />
+            <Button Text="+" StyleClass="Op" Grid.Row="3" Grid.Column="3" Clicked="OnOperator" />
+
+            <Button Text="±" StyleClass="Fn" Grid.Row="4" Grid.Column="0" Clicked="OnSign" />
+            <Button Text="0" Grid.Row="4" Grid.Column="1" Clicked="OnDigit" />
+            <Button Text="." Grid.Row="4" Grid.Column="2" Clicked="OnDecimal" />
+            <Button Text="=" StyleClass="Op" Grid.Row="4" Grid.Column="3" Clicked="OnEquals" />
+        </Grid>
+    </Grid>
+</ContentPage>
